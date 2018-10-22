@@ -58,7 +58,7 @@ void FillRnd(const Allocation& allocation)
     {
         *addr = rnd();
         addr++;
-        size -= sizeof(uint32_t);
+        size -= (uint32_t)sizeof(uint32_t);
     }
     if (size > 0)
     {
@@ -79,7 +79,7 @@ int VerifyRnd(const Allocation& allocation)
         if (*addr != rnd())
             return 1;
         addr++;
-        size -= sizeof(uint32_t);
+        size -= (uint32_t)sizeof(uint32_t);
     }
     if (size > 0)
     {
