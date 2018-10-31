@@ -9,6 +9,7 @@ pipeline {
             docker {
               image 'oetools-azure:1.6'
               label 'hardware'
+              args '-v /dev/sgx:/dev/sgx'
             }
           }
 
