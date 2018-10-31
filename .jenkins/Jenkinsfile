@@ -15,6 +15,7 @@ pipeline {
 
           steps {
             timeout(15) {
+              sh 'ls -l /dev'
               sh './scripts/test-build-config -p SGX1FLC -b Debug -d --compiler=clang-7'
             }
           }
