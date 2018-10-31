@@ -3,7 +3,8 @@
 
 include(oeedl_file)
 include(add_enclave_executable)
-
+set(S_DATA_DIR "../../data")
+set(DATA_DIR "./data")
 oeedl_file(../crypto.edl enclave gen)
 
 add_executable(cryptoenc
@@ -17,6 +18,7 @@ add_executable(cryptoenc
     ../../sha_tests.c
     ../../tests.c
      ${gen})
+
 
 target_include_directories(cryptoenc PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(cryptoenc oeenclave)
