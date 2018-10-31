@@ -12,6 +12,7 @@
 #include <openenclave/internal/raise.h>
 #include <openenclave/internal/rsa.h>
 #include <openenclave/internal/sha.h>
+#include <openenclave/internal/syscall.h>
 #include <openenclave/internal/tests.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -20,21 +21,19 @@
 #include <sys/syscall.h>
 #include <sys/uio.h>
 #include <unistd.h>
-#include <openenclave/internal/syscall.h>
 #include "../../tests.h"
 #include "../syscall_args.h"
 
 char* oe_host_strdup(const char* str)
-{               
+{
     size_t n = oe_strlen(str);
     char* dup = (char*)oe_host_malloc(n + 1);
 
-    if (dup)    
+    if (dup)
         oe_memcpy(dup, str, n + 1);
-                
+
     return dup;
 }
-
 
 static oe_result_t _syscall_hook(
     long number,
@@ -93,8 +92,8 @@ static oe_result_t _syscall_hook(
             oe_host_free(args);
             result = OE_OK;
             break;
-	}
-	case SYS_readv:
+        }
+        case SYS_readv:
         {
             syscall_args_t* args;
             args = (syscall_args_t*)oe_host_malloc(sizeof(syscall_args_t));
@@ -126,7 +125,7 @@ static oe_result_t _syscall_hook(
             break;
         }
 
-	case SYS_close:
+        case SYS_close:
         {
             syscall_args_t* args;
             args = (syscall_args_t*)oe_host_malloc(sizeof(syscall_args_t));
@@ -140,18 +139,16 @@ static oe_result_t _syscall_hook(
         default:
         {
             OE_RAISE(OE_UNSUPPORTED);
-	}
-}
+        }
+    }
 
 done:
     return result;
 }
 
-
-
 void test()
 {
-	 oe_register_syscall_hook(_syscall_hook);
+    oe_register_syscall_hook(_syscall_hook);
     TestAll();
 }
 

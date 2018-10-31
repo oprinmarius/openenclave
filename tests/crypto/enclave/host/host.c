@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 #include <assert.h>
-#include <limits.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <openenclave/host.h>
 #include <openenclave/internal/error.h>
 #include <openenclave/internal/tests.h>
@@ -14,8 +14,8 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
-#include "crypto_u.h"
 #include "../syscall_args.h"
+#include "crypto_u.h"
 
 OE_OCALL void mbed_test_open(void* syscall_args)
 {
