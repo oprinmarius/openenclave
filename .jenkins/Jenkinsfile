@@ -8,8 +8,6 @@ pipeline {
           agent {
             docker {
               image 'oetools-azure:1.6'
-            }
-            node {
               label 'hardware'
             }
           }
