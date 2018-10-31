@@ -3,4 +3,4 @@
 
 add_executable(props_host host.c)
 target_link_libraries(props_host oehostapp)
-target_compile_options(props_host PRIVATE -Wconversion)
+target_compile_options(props_host PRIVATE -Wconversion -Wpointer-arith)

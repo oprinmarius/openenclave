@@ -6,3 +6,4 @@ add_enclave_executable(props_enc sign.conf
     enc.c
     props.c)
 target_link_libraries(props_enc oeenclave)
+target_compile_options(props_enc PRIVATE -Wconversion -Wpointer-arith)
