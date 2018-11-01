@@ -21,6 +21,8 @@
 #include "../crypto/init.h"
 #include "../host/enclave.h"
 
+#  define BN_MASK2        (0xffffffffffffffffL)
+
 static void _mem_reverse(void* dest_, const void* src_, size_t n)
 {
     unsigned char* dest = (unsigned char*)dest_;
@@ -75,11 +77,14 @@ static oe_result_t _get_modulus(RSA* rsa, uint8_t modulus[OE_KEY_SIZE])
 {
     oe_result_t result = OE_UNEXPECTED;
     uint8_t buf[OE_KEY_SIZE];
+    const BIGNUM *n;
+
 
     if (!rsa || !modulus)
         OE_RAISE(OE_INVALID_PARAMETER);
 
-    if (!BN_bn2bin(rsa->n, buf))
+    RSA_get0_key(rsa, &n, NULL, NULL);
+    if (!BN_bn2bin(n, buf))
         OE_RAISE(OE_FAILURE);
 
     _mem_reverse(modulus, buf, OE_KEY_SIZE);
@@ -98,11 +103,16 @@ static oe_result_t _get_exponent(RSA* rsa, uint8_t exponent[OE_EXPONENT_SIZE])
     if (!rsa || !exponent)
         OE_RAISE(OE_INVALID_PARAMETER);
 
-    if (rsa->e->top != 1)
+    const BIGNUM *e;
+
+    RSA_get0_key(rsa, NULL, &e, NULL);
+    uint64_t x = BN_get_word(e);
+
+
+    if (!x || x == BN_MASK2)
         OE_RAISE(OE_FAILURE);
 
     {
-        uint64_t x = rsa->e->d[0];
         exponent[0] = (x & 0x00000000000000FF) >> 0;
         exponent[1] = (x & 0x000000000000FF00) >> 8;
         exponent[2] = (x & 0x0000000000FF0000) >> 16;
