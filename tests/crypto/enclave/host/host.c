@@ -17,7 +17,7 @@
 #include "../syscall_args.h"
 #include "crypto_u.h"
 
-OE_OCALL void mbed_test_open(void* syscall_args)
+OE_OCALL void f_open(void* syscall_args)
 {
     syscall_args_t* args = (syscall_args_t*)syscall_args;
 
@@ -26,7 +26,7 @@ OE_OCALL void mbed_test_open(void* syscall_args)
     return;
 }
 
-OE_OCALL void mbed_test_read(void* syscall_args)
+OE_OCALL void f_read(void* syscall_args)
 {
     int ret;
     syscall_args_t* args = (syscall_args_t*)syscall_args;
@@ -37,7 +37,7 @@ OE_OCALL void mbed_test_read(void* syscall_args)
     return;
 }
 
-OE_OCALL void mbed_test_readv(void* syscall_args)
+OE_OCALL void f_readv(void* syscall_args)
 {
     syscall_args_t* args = (syscall_args_t*)syscall_args;
 
@@ -46,7 +46,7 @@ OE_OCALL void mbed_test_readv(void* syscall_args)
     return;
 }
 
-OE_OCALL void mbed_test_close(void* syscall_args)
+OE_OCALL void f_close(void* syscall_args)
 {
     syscall_args_t* args = (syscall_args_t*)syscall_args;
 

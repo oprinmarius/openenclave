@@ -3,8 +3,6 @@
 
 include(oeedl_file)
 include(add_enclave_executable)
-set(S_DATA_DIR "../../data")
-set(DATA_DIR "./data")
 oeedl_file(../crypto.edl enclave gen)
 
 add_executable(cryptoenc

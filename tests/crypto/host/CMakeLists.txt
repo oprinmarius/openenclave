@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 set(DATA_DIR "../data")
-set(S_DATA_DIR "../data")
 add_executable(hostcrypto 
     main.c
     ../asn1_tests.c
@@ -14,10 +13,9 @@ add_executable(hostcrypto
     ../tests.c)
 
 add_custom_command(TARGET hostcrypto
-COMMAND rm -rf ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}
 COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}
-COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/${S_DATA_DIR}/intermediate.cnf ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}/intermediate.cnf
-COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/${S_DATA_DIR}/root.cnf ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}/root.cnf
+COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/${DATA_DIR}/intermediate.cnf ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}/intermediate.cnf
+COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_CURRENT_SOURCE_DIR}/${DATA_DIR}/root.cnf ${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}/root.cnf
 COMMAND openssl genrsa -out ${DATA_DIR}/RootCA.key.pem
 COMMAND openssl req -new -x509 -key ${DATA_DIR}/RootCA.key.pem -out ${DATA_DIR}/RootCA.crt.pem -days 3650 -subj "/C=US/ST=Ohio/L=Columbus/O=Acme Company/OU=Acme/CN=Root" 
 # Creating Intermediate certificates signed by the Root CA
@@ -34,7 +32,7 @@ COMMAND openssl req -new -key ${DATA_DIR}/Leaf.key.pem -out ${DATA_DIR}/Leaf.csr
 COMMAND openssl x509 -req -in ${DATA_DIR}/Leaf.csr -CA ${DATA_DIR}/RootCA.crt.pem -CAkey ${DATA_DIR}/RootCA.key.pem -CAcreateserial -out ${DATA_DIR}/Leaf.crt.pem -days 3650
 
 #  Setup Certificate Revocation lists for the following test cases
-#  intermediade_crl is issued by Intermediade which revokes leaf cert
+#  intermediade_crl is issued by Intermediate which revokes leaf cert
 #  root_crl is issued by Root which revokes leaf cert
 
 COMMAND touch intermediate_index.txt

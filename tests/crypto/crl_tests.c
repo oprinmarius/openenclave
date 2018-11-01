@@ -55,12 +55,11 @@ oe_result_t read_chain(char* filename1, char* filename2, char* chain)
     if (cfp1 != NULL && cfp2 != NULL)
     {
         len_cert1 = fread(chain, sizeof(char), max_cert_size, cfp1);
+        chain[len_cert1] = '\0';
         len_cert2 = fread(chain_temp, sizeof(char), max_cert_size, cfp2);
         chain_temp[++len_cert2] = '\0';
-        for (int i = 0; i < len_cert2; i++)
-        {
-            chain[len_cert1++] = chain_temp[i];
-        }
+
+        strcat(chain, chain_temp);
     }
     else
     {
@@ -79,7 +78,6 @@ oe_result_t read_crl(char* filename, uint8_t* crl, size_t* crl_size)
     if (cfp != NULL)
     {
         len_crl = fread(crl, sizeof(char), max_cert_size, cfp);
-        fread(crl, sizeof(char), max_cert_size, cfp);
     }
     else
     {
@@ -94,7 +92,6 @@ oe_result_t read_crl(char* filename, uint8_t* crl, size_t* crl_size)
 oe_result_t read_dates(char* filename, oe_datetime_t* time)
 {
     size_t len_date = 0;
-    char* string[max_date_elements];
     char buffer[max_date_size];
     FILE* dfp = fopen(filename, "r");
 
@@ -107,21 +104,17 @@ oe_result_t read_dates(char* filename, oe_datetime_t* time)
         return OE_FAILURE;
     }
     buffer[len_date] = '\0';
-    char delimit[] = ":";
-    int i = 0;
-    string[i] = strtok(buffer, delimit);
 
-    while (string[i] != NULL)
-    {
-        i++;
-        string[i] = strtok(NULL, delimit);
-    }
-    sscanf(string[0], "%u", &(time->year));
-    sscanf(string[1], "%u", &(time->month));
-    sscanf(string[2], "%u", &(time->day));
-    sscanf(string[3], "%u", &(time->hours));
-    sscanf(string[4], "%u", &(time->minutes));
-    sscanf(string[5], "%u", &(time->seconds));
+    sscanf(
+        buffer,
+        "%u :%u :%u :%u :%u :%u",
+        &(time->year),
+        &(time->month),
+        &(time->day),
+        &(time->hours),
+        &(time->minutes),
+        &(time->seconds));
+
     fclose(dfp);
     return OE_OK;
 }

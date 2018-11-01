@@ -65,7 +65,7 @@ static oe_result_t _syscall_hook(
                 args->path = oe_host_strdup((const char*)arg1);
                 args->flags = (int)arg2;
                 args->mode = (int)arg3;
-                oe_call_host("mbed_test_open", args);
+                oe_call_host("f_open", args);
                 *ret = args->fd;
                 oe_host_free(args->path);
                 oe_host_free(args);
@@ -82,7 +82,7 @@ static oe_result_t _syscall_hook(
             args->ptr = (void*)host_buf;
             args->fd = (int)arg1;
             args->len = (int)arg3;
-            oe_call_host("mbed_test_read", args);
+            oe_call_host("f_read", args);
 
             if ((args->ret) > 0)
                 oe_memcpy(enc_buf, host_buf, arg3);
@@ -109,7 +109,7 @@ static oe_result_t _syscall_hook(
             args->ptr = (void*)iov_host;
             args->fd = (int)arg1;
             args->len = (int)arg3;
-            oe_call_host("mbed_test_readv", args);
+            oe_call_host("f_readv", args);
 
             if ((args->ret) > 0)
                 for (i = 0; i < (int)arg3; i++)
@@ -130,7 +130,7 @@ static oe_result_t _syscall_hook(
             syscall_args_t* args;
             args = (syscall_args_t*)oe_host_malloc(sizeof(syscall_args_t));
             args->fd = (int)arg1;
-            oe_call_host("mbed_test_close", args);
+            oe_call_host("f_close", args);
             *ret = args->ret;
             oe_host_free(args);
             result = OE_OK;

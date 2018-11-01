@@ -8,7 +8,7 @@ void TestAll()
     //    TestASN1();
     TestCRL();
     //   TestEC();
-    //  TestRandom();
-    //   TestRSA();
-    //  TestSHA();
+      TestRandom();
+    //    TestRSA();
+     TestSHA();
 }
