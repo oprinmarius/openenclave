@@ -74,7 +74,7 @@ if [[ ${usage} -eq 1 ]]; then
 
 OVERVIEW:
 
-Formats all C/C++ source files based on the .clang-format rules
+Formats all C/C++/EDL source files based on the .clang-format rules
 
     $ format-code [-h] [-v] [-w] [--exclude-dirs="..."] [--include-exts="..."]
 
@@ -169,7 +169,7 @@ findargs='find .'
 get_find_args()
 {
     local defaultExcludeDirs='3rdparty prereqs build .cquery_cached_index'
-    local defaultIncludeExts='h c cpp'
+    local defaultIncludeExts='h c cpp edl'
 
     if [[ -z ${userExcludeDirs} ]]; then
         local excludeDirs=( ${defaultExcludeDirs} )

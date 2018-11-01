@@ -1,14 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-enclave {
-    trusted {
-        public void enclave_helloworld();
+enclave
+{
+    trusted
+    {
+      public
+        void enclave_helloworld();
     };
 
-    untrusted {
+    untrusted
+    {
         void host_helloworld();
     };
 };
-
-

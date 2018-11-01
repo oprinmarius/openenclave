@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-enclave {
-    struct dummy_struct {
+enclave
+{
+    struct dummy_struct
+    {
         int32_t a;
         int32_t b;
     };
@@ -12,27 +14,26 @@ enclave {
         int64_t y;
     };
 
-    trusted {
-        public void get_globals(
+    trusted
+    {
+      public
+        void get_globals(
             [out] int* global_int,
             [out] float* global_float,
             [out] int** global_ptr,
             [out] dummy_struct* global_struct,
             [out] dummy_union* global_union,
             [out] int global_array[4],
-            bool get_default
-        );
+            bool get_default);
 
-        public void set_globals(
+      public
+        void set_globals(
             int global_int,
             float global_float,
             [user_check] int* global_ptr,
             dummy_struct global_struct,
             dummy_union global_union,
             [in] int global_array[4],
-            bool set_default
-        );
+            bool set_default);
     };
 };
-
-
