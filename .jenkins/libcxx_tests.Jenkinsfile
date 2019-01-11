@@ -1,87 +1,25 @@
-pipeline {
-  agent any
-  stages {
-    stage('Build and Run libcxx Tests') {
-      parallel {
-        stage('libcxx clang-7 Debug') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
+def ACClibcxxTest(String label, String compiler, String suite) {
+    stage("libcxx $label SGX1FLC $compiler $suite") {
+        node("$label") {
+            cleanWs()
+            checkout scm
 
-          }
-          steps {
             timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b Debug -d --enable_full_libcxx_tests --compiler=clang-7'
+                sh "./scripts/test-build-config -p SGX1FLC -b $suite -d --enable_full_libcxx_tests --compiler=$compiler"
             }
-          }
         }
-        stage('libcxx clang-7 Release') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
-
-          }
-          steps {
-            timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b Release -d --enable_full_libcxx_tests --compiler=clang-7'
-            }
-          }
-        }
-        stage('libcxx clang-7 RelWithDebInfo') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
-
-          }
-          steps {
-            timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b RelWithDebInfo -d --enable_full_libcxx_tests --compiler=clang-7'
-            }
-          }
-        }
-        stage('libcxx gcc Debug') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
-
-          }
-          steps {
-            timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b Debug -d --enable_full_libcxx_tests --compiler=gcc'
-            }
-          }
-        }
-        stage('libcxx gcc Release') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
-
-          }
-          steps {
-            timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b Release -d --enable_full_libcxx_tests --compiler=gcc'
-            }
-          }
-        }
-        stage('libcxx gcc RelWithDebInfo') {
-          agent {
-            node {
-              label 'ACC-1604'
-          }
-
-          }
-          steps {
-            timeout(180) {
-              sh 'bash ./scripts/test-build-config -p SGX1FLC -b RelWithDebInfo -d --enable_full_libcxx_tests --compiler=gcc'
-            }
-          }
-        }
-      }
     }
-  }
 }
+
+parallel "libcxx ACC1604 clang-7 Debug" :          { ACClibcxxTest('ACC-1604', 'clang-7', 'Debug') },
+         "libcxx ACC1604 clang-7 Release" :        { ACClibcxxTest('ACC-1604', 'clang-7','Release') },
+         "libcxx ACC1604 clang-7 RelWithDebInfo" : { ACClibcxxTest('ACC-1604', 'clang-7', 'RelWithDebinfo') },
+         "libcxx ACC1604 gcc Debug" :              { ACClibcxxTest('ACC-1604', 'gcc', 'Debug') },
+         "libcxx ACC1604 gcc Release" :            { ACClibcxxTest('ACC-1604', 'gcc', 'Release') },
+         "libcxx ACC1604 gcc RelWithDebInfo" :     { ACClibcxxTest('ACC-1604', 'gcc', 'RelWithDebInfo') },
+         "libcxx ACC1804 clang-7 Debug" :          { ACClibcxxTest('ACC-1804', 'clang-7', 'Debug') },
+         "libcxx ACC1804 clang-7 Release" :        { ACClibcxxTest('ACC-1804', 'clang-7', 'Release') },
+         "libcxx ACC1804 clang-7 RelWithDebInfo" : { ACClibcxxTest('ACC-1804', 'clang-7', 'RelWithDebinfo') },
+         "libcxx ACC1804 gcc Debug" :              { ACClibcxxTest('ACC-1804', 'gcc', 'Debug') },
+         "libcxx ACC1804 gcc Release" :            { ACClibcxxTest('ACC-1804', 'gcc', 'Release') },
+         "libcxx ACC1804 gcc RelWithDebInfo" :     { ACClibcxxTest('ACC-1804', 'gcc', 'RelWithDebinfo') }
