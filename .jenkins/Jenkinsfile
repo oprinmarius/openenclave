@@ -1,7 +1,7 @@
 // oetools-image:tag  Docker image from OE Jenkins Registry
 OETOOLS_REPO = "https://oejenkinscidockerregistry.azurecr.io"
 OETOOLS_REPO_CREDENTIAL_ID = "oejenkinscidockerregistry"
-OETOOLS_IMAGE = "oetools-azure:1.10"
+OETOOLS_IMAGE = "oetools-azure:1.9"
 
 
 def PowerShellWrapper(psCmd) {
@@ -175,23 +175,48 @@ def win2016Release() {
         }
     }
 }
-parallel "Check Pre-Commit Requirements" :      { checkPreCommitRequirements() },
-        "Sim clang-7 SGX1 Debug" :              { simulationTest('clang-7', 'SGX1', 'Debug')},
-        "Sim clang-7 SGX1 Release" :            { simulationTest('clang-7', 'SGX1', 'Release')},
-        "Sim clang-7 SGX1 RelWithDebInfo" :     { simulationTest('clang-7', 'SGX1', 'RelWithDebInfo')},
-        "Sim clang-7 SGX1-FLC Debug" :          { simulationTest('clang-7', 'SGX1FLC', 'Debug')},
-        "Sim clang-7 SGX1-FLC Release" :        { simulationTest('clang-7', 'SGX1FLC', 'Release')},
-        "Sim clang-7 SGX1-FLC RelWithDebInfo" : { simulationTest('clang-7', 'SGX1FLC', 'RelWithDebInfo')},
-        "ACC1604 clang-7 Debug" :               { ACCTest('ACC-1604', 'clang-7', 'SGX1FLC', 'Debug') },
-        "ACC1604 clang-7 Release" :             { ACCTest('ACC-1604', 'clang-7', 'SGX1FLC','Release') },
-        "ACC1604 clang-7 RelWithDebInfo" :      { ACCTest('ACC-1604', 'clang-7', 'SGX1FLC', 'RelWithDebinfo') },
-        "ACC1604 gcc Debug" :                   { ACCTest('ACC-1604', 'gcc', 'SGX1FLC', 'Debug') },
-        "ACC1604 gcc Release" :                 { ACCTest('ACC-1604', 'gcc', 'SGX1FLC', 'Release') },
-        "ACC1604 gcc RelWithDebInfo" :          { ACCTest('ACC-1604', 'gcc', 'SGX1FLC', 'RelWithDebInfo') },
-        "ACC1804 clang-7 Debug" :               { ACCTest('ACC-1804', 'clang-7', 'SGX1FLC', 'Debug') },
-        "ACC1804 clang-7 RelWithDebInfo" :      { ACCTest('ACC-1804', 'clang-7', 'SGX1FLC', 'RelWithDebinfo') },
-        "Win2016 Debug Cross-platform" :        { win2016DebugCrossPlatform() },
-        "Win2016 Release Cross-platform" :      { win2016ReleaseCrossPlatform() },
-        "Win2016 Debug" :                       { win2016Debug() },
-        "Win2016 Release" :                     { win2016Release() },
-        "ACC1604 Container RelWithDebInfo" :    { ACCContainerTest('ACC-1604') }
+
+
+def docker_build_test() {
+    stage('Sim default compiler') {
+        // This particular test asserts that everything (at least
+        // for simulation) can be built after using our
+        // install-prereqs ansible playbook to to bootstrap a machine.
+        node {
+            cleanWs()
+            checkout scm
+
+            def buildImage = docker.build("oetools-test", '-f .jenkins/Dockerfile.scripts .')
+
+            buildImage.inside {
+                timeout(15) {
+                    // This is run to test that it works with the dependencies
+                    // installed by our install-prereqs ansible playbook.
+                    sh './scripts/check-ci'
+                    // installed by our install-prereqs script.
+
+                    dir('build') {
+                        sh '''
+                        cmake .. -DUSE_LIBSGX=OFF
+                        make
+                    '''
+                        // Note that `make package` is not expected to work
+                        // without extra configuration.
+                    }
+                }
+            }
+        }
+    }
+}
+
+def cache_testing() {
+    node('ACC-1804') {
+        cleanWs( )
+        buildImage.inside { 
+            sh './scripts/check-ci'
+        }
+    }
+}
+
+docker_build_test()
+cache_testing()
