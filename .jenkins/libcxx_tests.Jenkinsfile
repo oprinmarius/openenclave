@@ -1,11 +1,44 @@
-def ACClibcxxTest(String label, String compiler, String suite) {
-    stage("libcxx $label SGX1FLC $compiler $suite") {
-        node("$label") {
+def ACClibcxxTest(String label, String compiler, String build_type) {
+    stage("libcxx ${label} SGX1FLC ${compiler} ${build_type}") {
+        node("${label}") {
             cleanWs()
             checkout scm
 
             timeout(180) {
-                sh "./scripts/test-build-config -p SGX1FLC -b $suite -d --enable_full_libcxx_tests --compiler=$compiler"
+                def c_compiler
+                def cpp_compiler
+                if (compiler == "gcc") {
+                  c_compiler = "gcc"
+                  cpp_compiler = "g++"
+                } else if (compiler == "clang-7") {
+                  c_compiler = "clang-7"
+                  cpp_compiler = "clang++-7"
+                }
+                dir('build'){
+                    withEnv(["CC=${c_compiler}","CXX=${cpp_compiler}"]) {
+                        sh """
+                        CMAKE="cmake .. -DCMAKE_BUILD_TYPE=${build_type} -DUSE_LIBSGX=1 -DENABLE_FULL_LIBCXX_TESTS=1"
+                        if ! \${CMAKE}; then
+                            echo ""
+                            echo "cmake failed for SGX1FLC"
+                            echo ""
+                            exit 1
+                        fi
+                        if ! make; then
+                            echo ""
+                            echo "Build failed for SGX1FLC"
+                            echo ""
+                            exit 1
+                        fi
+                        if ! ctest --output-on-failure; then
+                            echo ""
+                            echo "Test failed for SGX1FLC ${build_type} in ${label} hardware mode"
+                            echo ""
+                            exit 1
+                        fi
+                        """
+                    }
+                }
             }
         }
     }
