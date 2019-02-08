@@ -150,23 +150,34 @@ def win2016LinuxElfBuild(String version, String build_type) {
                 bat """vcvars64.bat x64 && \
                        cmake.exe ${WORKSPACE} -G \"Visual Studio 15 2017 Win64\" -DADD_WINDOWS_ENCLAVE_TESTS=ON -DBUILD_ENCLAVES=OFF -DCMAKE_BUILD_TYPE=${build_type} -DLINUX_BIN_DIR=${WORKSPACE}\\linuxbin\\tests && \
                        msbuild ALL_BUILD.vcxproj -p:Configuration=${build_type} && \
-                       ctest.exe -V -C ${build_type}"""
+                       ctest.exe -C ${build_type} --output-on-failure"""
             }
        }
     }
 }
 
 def win2016CrossCompile(String build_type) {
-    stage("Windows ${build_type}") {
-        node('SGXFLC-Windows') {
+    node('SGXFLC-Windows') {
+        stage("Windows ${build_type}") {
             cleanWs()
             checkout scm
             dir("build/X64-${build_type}") {
                 bat """vcvars64.bat x64 && \
                        cmake.exe ${WORKSPACE} -G Ninja -DCMAKE_BUILD_TYPE=${build_type} -DBUILD_ENCLAVES=ON && \
                        ninja.exe && \
-                       ctest.exe -V -C ${build_type}"""
-            }          
+                       ctest.exe -C ${build_type} --output-on-failure"""
+            }
+       }
+       stage("Windows ${build_type} Simulation") {
+           withEnv(["OE_SIMULATION=1"]){
+               dir("build/X64-${build_type}"){
+                   bat """
+                       vcvars64.bat x64 && \
+                       cmake.exe ${WORKSPACE} -G Ninja -DCMAKE_BUILD_TYPE=${build_type} -DBUILD_ENCLAVES=ON -DWIN32_SIMULATION=ON && \
+                       ctest.exe -C ${build_type} --output-on-failure
+                       """
+               }
+           }
        }
     }
 }
