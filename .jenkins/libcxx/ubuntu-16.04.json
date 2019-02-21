@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "vmProfiles": [
+      {
+        "name": "libcxx-xenial-vm",
+        "osType": "Linux",
+        "vmSize": "Standard_DC2s",
+        "ports": [22],
+        "isVanilla": true,
+        "hasDNSName": true
+      }
+    ],
+    "vnetProfile": {
+      "vnetResourceGroup": "OE-Jenkins-CI-VNET",
+      "vnetName": "OE-Jenkins-CI-VNET",
+      "subnetName": "default"
+    },
+    "linuxProfile": {
+      "adminUsername": "azureuser",
+      "sshPublicKeys": [
+        {
+          "keyData": ""
+        }
+      ]
+    },
+    "diagnosticsProfile": {
+      "enabled": false
+    }
+  }
+}
