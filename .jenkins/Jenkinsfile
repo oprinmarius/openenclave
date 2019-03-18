@@ -51,7 +51,8 @@ def simulationTest(String version, String platform_mode, String build_type) {
 def ACCContainerTest(String label, String version) {
     stage("${label} Container RelWithDebInfo") {
         node("${label}") {
-            oe.dockerImage("oetools:${version}", ".jenkins/Dockerfile", "--build-arg ubuntu_version=${version}").inside('--device /dev/sgx:/dev/sgx') {
+            def oetools = docker.build("oetools:${version}", "--build-arg ubuntu_version=18.04 -f .jenkins/Dockerfile .")
+            oetools.inside('--device /dev/sgx:/dev/sgx') {
                 def task = """
                            cmake ${WORKSPACE} -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo ${cmakeCheckFlags}
                            ninja -v
@@ -134,6 +135,9 @@ def win2016CrossCompile(String build_type) {
     }
 }
 
+ACCContainerTest('ACC-1804', '18.04')
+
+/*
 parallel "Check Developer Experience Ubuntu 16.04" :            { checkDevFlows('16.04') },
          "Check Developer Experience Ubuntu 18.04" :            { checkDevFlows('18.04') },
          "Check CI" :                                           { checkCI() },
@@ -171,3 +175,4 @@ parallel "Check Developer Experience Ubuntu 16.04" :            { checkDevFlows(
          "Win2016 Ubuntu1804 gcc Debug Linux-Elf-build" :       { win2016LinuxElfBuild('18.04', 'gcc', 'Debug') },
          "Win2016 Debug Cross Compile" :                        { win2016CrossCompile('Debug') },
          "Win2016 Release Cross Compile" :                      { win2016CrossCompile('Release') }
+*/
