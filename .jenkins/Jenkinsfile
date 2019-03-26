@@ -68,9 +68,9 @@ def checkDevFlows(String version) {
                 timeout(30) {
                     dir('build') {
                         sh """
-                           cmake ${WORKSPACE} -G Ninja -DUSE_LIBSGX=OFF ${cmakeCheckFlags}
-                           ninja -v
-                           """
+                        cmake ${WORKSPACE} -G Ninja -DUSE_LIBSGX=OFF -Wdev --warn-uninitialized -Werror=dev
+                        ninja -v
+                        """
                     }
                 }
             }
@@ -137,7 +137,8 @@ def win2016CrossCompile(String build_type) {
 }
 
 parallel "Check Developer Experience Ubuntu 16.04" :            { checkDevFlows('16.04') },
-         "Check Developer Experience Ubuntu 18.04" :            { checkDevFlows('18.04') },
+         "Check Developer Experience Ubuntu 18.04" :            { checkDevFlows('18.04') }
+/*
          "Check CI" :                                           { checkCI() },
          "ACC1604 clang-7 Debug" :                              { ACCTest('ACC-1604', 'clang-7', 'Debug') },
          "ACC1604 clang-7 Release" :                            { ACCTest('ACC-1604', 'clang-7', 'Release') },
@@ -173,3 +174,4 @@ parallel "Check Developer Experience Ubuntu 16.04" :            { checkDevFlows(
          "Win2016 Ubuntu1804 gcc Debug Linux-Elf-build" :       { win2016LinuxElfBuild('18.04', 'gcc', 'Debug') },
          "Win2016 Debug Cross Compile" :                        { win2016CrossCompile('Debug') },
          "Win2016 Release Cross Compile" :                      { win2016CrossCompile('Release') }
+*/
