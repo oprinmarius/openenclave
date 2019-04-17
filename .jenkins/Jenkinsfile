@@ -1,4 +1,4 @@
-@Library("OpenEnclaveCommon") _
+@Library("OpenEnclaveCommon@docker_images_test") _
 oe = new jenkins.common.Openenclave()
 
 def ACCTest(String label, String compiler, String build_type) {
@@ -18,7 +18,7 @@ def ACCTest(String label, String compiler, String build_type) {
 
 def ACCGNUTest() {
     stage("ACC1804 GNU gcc SGX1FLC") {
-        node("ACC-1804") {
+        node("acc-1804-temp") {
             cleanWs()
             checkout scm
             def task = """
@@ -151,20 +151,20 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '90',
 parallel "Check Developer Experience Ubuntu 16.04" :            { checkDevFlows('16.04') },
          "Check Developer Experience Ubuntu 18.04" :            { checkDevFlows('18.04') },
          "Check CI" :                                           { checkCI() },
-         "ACC1604 clang-8 Debug" :                              { ACCTest('ACC-1604', 'clang-8', 'Debug') },
-         "ACC1604 clang-8 Release" :                            { ACCTest('ACC-1604', 'clang-8', 'Release') },
-         "ACC1604 clang-8 RelWithDebInfo" :                     { ACCTest('ACC-1604', 'clang-8', 'RelWithDebinfo') },
-         "ACC1604 gcc Debug" :                                  { ACCTest('ACC-1604', 'gcc', 'Debug') },
-         "ACC1604 gcc Release" :                                { ACCTest('ACC-1604', 'gcc', 'Release') },
-         "ACC1604 gcc RelWithDebInfo" :                         { ACCTest('ACC-1604', 'gcc', 'RelWithDebInfo') },
-         "ACC1604 Container RelWithDebInfo" :                   { ACCContainerTest('ACC-1604', '16.04') },
-         "ACC1804 clang-8 Debug" :                              { ACCTest('ACC-1804', 'clang-8', 'Debug') },
-         "ACC1804 clang-8 Release" :                            { ACCTest('ACC-1804', 'clang-8', 'Release') },
-         "ACC1804 clang-8 RelWithDebInfo" :                     { ACCTest('ACC-1804', 'clang-8', 'RelWithDebinfo') },
-         "ACC1804 gcc Debug" :                                  { ACCTest('ACC-1804', 'gcc', 'Debug') },
-         "ACC1804 gcc Release" :                                { ACCTest('ACC-1804', 'gcc', 'Release') },
-         "ACC1804 gcc RelWithDebInfo" :                         { ACCTest('ACC-1804', 'gcc', 'RelWithDebInfo') },
-         "ACC1804 Container RelWithDebInfo" :                   { ACCContainerTest('ACC-1804', '18.04') },
+         "ACC1604 clang-8 Debug" :                              { ACCTest('acc-1604-temp', 'clang-8', 'Debug') },
+         "ACC1604 clang-8 Release" :                            { ACCTest('acc-1604-temp', 'clang-8', 'Release') },
+         "ACC1604 clang-8 RelWithDebInfo" :                     { ACCTest('acc-1604-temp', 'clang-8', 'RelWithDebinfo') },
+         "ACC1604 gcc Debug" :                                  { ACCTest('acc-1604-temp', 'gcc', 'Debug') },
+         "ACC1604 gcc Release" :                                { ACCTest('acc-1604-temp', 'gcc', 'Release') },
+         "ACC1604 gcc RelWithDebInfo" :                         { ACCTest('acc-1604-temp', 'gcc', 'RelWithDebInfo') },
+         "ACC1604 Container RelWithDebInfo" :                   { ACCContainerTest('acc-1604-temp', '16.04') },
+         "ACC1804 clang-8 Debug" :                              { ACCTest('acc-1804-temp', 'clang-8', 'Debug') },
+         "ACC1804 clang-8 Release" :                            { ACCTest('acc-1804-temp', 'clang-8', 'Release') },
+         "ACC1804 clang-8 RelWithDebInfo" :                     { ACCTest('acc-1804-temp', 'clang-8', 'RelWithDebinfo') },
+         "ACC1804 gcc Debug" :                                  { ACCTest('acc-1804-temp', 'gcc', 'Debug') },
+         "ACC1804 gcc Release" :                                { ACCTest('acc-1804-temp', 'gcc', 'Release') },
+         "ACC1804 gcc RelWithDebInfo" :                         { ACCTest('acc-1804-temp', 'gcc', 'RelWithDebInfo') },
+         "ACC1804 Container RelWithDebInfo" :                   { ACCContainerTest('acc-1804-temp', '18.04') },
          "ACC1804 GNU gcc SGX1FLC" :                            { ACCGNUTest() },
          "Sim 1604 clang-8 SGX1 Debug" :                        { simulationTest('16.04', 'SGX1', 'Debug')},
          "Sim 1604 clang-8 SGX1 Release" :                      { simulationTest('16.04', 'SGX1', 'Release')},
