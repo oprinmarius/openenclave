@@ -221,7 +221,6 @@ if (UNIX)
     add_subdirectory(debugger)
   endif()
   add_subdirectory(docs/refman)
-  add_subdirectory(pkgconfig)
   add_subdirectory(samples)
 endif()
 
