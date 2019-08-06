@@ -19,7 +19,7 @@
         seven_zip_url:       "https://oejenkins.blob.core.windows.net/oejenkins/7z1806-x64.msi"
         seven_zip_hash:      "F00E1588ED54DDF633D8652EB89D0A8F95BD80CCCFC3EED362D81927BEC05AA5"
         vs_buildtools_2017:  "https://oejenkins.blob.core.windows.net/oejenkins/vs_buildtools_2017.exe"
-        vs_buildtools_hash:  "6F49872B04A0EAEDF5ED96AB25F7697062D81A419D45D9970E41784F31165BF2"
+        vs_buildtools_2017_hash:  "6F49872B04A0EAEDF5ED96AB25F7697062D81A419D45D9970E41784F31165BF2"
         ocaml_url:           "https://oejenkins.blob.core.windows.net/oejenkins/ocpwin64-20160113-4.02.1+ocp1-mingw64.zip"
         ocaml_hash:          "369F900F7CDA543ABF674520ED6004CC75008E10BEED0D34845E8A42866D0F3A"
         clang7_url:          "https://oejenkins.blob.core.windows.net/oejenkins/LLVM-7.0.1-win64.exe"
@@ -36,8 +36,8 @@
     - name: OE setup | Run the install-windows-prereqs.ps1 script (this may take a while)
       script: ../install-windows-prereqs.ps1
         -InstallPath         "C:\openenclave"
-        -WithFLC             "{{ '$true' if dcap_testing_node is defined and dcap_testing_node == true else '$false' }}"
-        -WithAzureDCAPClient "{{ '$true' if dcap_testing_node is defined and dcap_testing_node == true else '$false' }}"
+        -WithFLC             "{{ 1 if dcap_testing_node is defined and dcap_testing_node == true else 0 }}"
+        -WithAzureDCAPClient "{{ 1 if dcap_testing_node is defined and dcap_testing_node == true else 0 }}"
         -IntelPSWURL         "{{ intel_psw_2_4_url if dcap_testing_node is defined and dcap_testing_node == true else intel_psw_2_2_url }}"
         -IntelPSWHash        "{{ intel_psw_2_4_hash if dcap_testing_node is defined and dcap_testing_node == true else intel_psw_2_2_hash }}"
         -IntelDCAPURL        "{{ intel_dcap_url }}"
@@ -63,6 +63,7 @@
 
     - name: OE setup | Reboot the node
       win_reboot:
+      when: ansible_user != "packer"
 
     - import_role:
         name: windows/openenclave
