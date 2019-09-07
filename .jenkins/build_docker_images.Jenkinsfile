@@ -16,9 +16,11 @@ def buildDockerImages() {
             }
             oefullWin2016 = oe.dockerImage("oetools-full-ltsc2016:${DOCKER_TAG}", ".jenkins/Dockerfile.full.WindowsServer", "--build-arg windows_version=ltsc2016")
             puboefullWin2016 = oe.dockerImage("oeciteam/oetools-full-ltsc2016:${DOCKER_TAG}", ".jenkins/Dockerfile.full.WindowsServer", "--build-arg windows_version=ltsc2016")
-            oefullWin2016.push()
-            if(TAG_LATEST == "true") {
+            docker.withRegistry(OETOOLS_REPO, OETOOLS_REPO_CREDENTIAL_ID) { 
+              oefullWin2016.push()
+              if(TAG_LATEST == "true") {
                 oefullWin2016.push('latest')
+              }
             }
             docker.withRegistry('', OETOOLS_DOCKERHUB_REPO_CREDENTIAL_ID) {
                 if(TAG_LATEST == "true") {
