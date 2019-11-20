@@ -424,10 +424,10 @@ function Install-Node {
                  -ArgumentList @("/quiet", "/passive") `
                  -EnvironmentPath @($installDir)
 
-    Add-ToSystemPath -Path "${env:APPDATA}\npm"
+    Add-ToSystemPath -Path $InstallPath
 
     Start-ExecuteWithRetry -ScriptBlock {
-        npm install -g esy@0.5.8
+        npm install --prefix $InstallPath -g esy@0.5.8
     } -RetryMessage "Failed to install esy. Retrying"
 }
 
