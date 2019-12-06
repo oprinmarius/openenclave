@@ -11,6 +11,9 @@ if [[ -z $SERVICE_PRINCIPAL_PASSWORD ]]; then echo "ERROR: Env variable SERVICE_
 if [[ -z $TENANT_ID ]]; then echo "ERROR: Env variable TENANT_ID is not set"; exit 1; fi
 if [[ -z $REGION ]]; then echo "ERROR: Env variable REGION is not set"; exit 1; fi
 if [[ -z $RESOURCE_GROUP ]]; then echo "ERROR: Env variable RESOURCE_GROUP is not set"; exit 1; fi
+if [[ -z $VNET_RESOURCE_GROUP ]]; then echo "ERROR: Env variable VNET_RESOURCE_GROUP is not set"; exit 1; fi
+if [[ -z $VNET_NAME ]]; then echo "ERROR: Env variable VNET_NAME is not set"; exit 1; fi
+if [[ -z $VNET_SUBNET_NAME ]]; then echo "ERROR: Env variable VNET_SUBNET_NAME is not set"; exit 1; fi
 
 if [[ -z $AGENT_NAME ]]; then echo "ERROR: Env variable AGENT_NAME is not set"; exit 1; fi
 if [[ -z $VHD_URL ]]; then echo "ERROR: Env variable VHD_URL is not set"; exit 1; fi
