@@ -14,6 +14,9 @@ if [[ -z $RESOURCE_GROUP ]]; then echo "ERROR: Env variable RESOURCE_GROUP is no
 if [[ -z $VNET_RESOURCE_GROUP ]]; then echo "ERROR: Env variable VNET_RESOURCE_GROUP is not set"; exit 1; fi
 if [[ -z $VNET_NAME ]]; then echo "ERROR: Env variable VNET_NAME is not set"; exit 1; fi
 if [[ -z $VNET_SUBNET_NAME ]]; then echo "ERROR: Env variable VNET_SUBNET_NAME is not set"; exit 1; fi
+if [[ -z $KV_NAME ]]; then echo "ERROR: Env variable KEYVAULT_NAME is not set"; exit 1; fi
+if [[ -z $KV_SECRET_SSH_PUB ]]; then echo "ERROR: Env variable KV_PUB_KEY is not set"; exit 1; fi
+if [[ -z $KV_SECRET_WIN_PWD ]]; then echo "ERROR: Env variable VNET_NAME is not set"; exit 1; fi
 
 if [[ -z $AGENT_NAME ]]; then echo "ERROR: Env variable AGENT_NAME is not set"; exit 1; fi
 if [[ -z $VHD_URL ]]; then echo "ERROR: Env variable VHD_URL is not set"; exit 1; fi
@@ -50,8 +53,8 @@ check_open_port() {
 az login --service-principal -u "${SERVICE_PRINCIPAL_ID}" -p "${SERVICE_PRINCIPAL_PASSWORD}" --tenant "${TENANT_ID}" --output table
 az account set --subscription "${SUBSCRIPTION_ID}"
 
-KEY=$(az keyvault secret show --vault-name "oe-ci-test-kv" --name "id-rsa-oe-test-pub" | jq -r .value | base64 -d)
-PASSWORD=$(az keyvault secret show --vault-name "oe-ci-test-kv" --name "windows-pwd" | jq -r .value)
+KEY=$(az keyvault secret show --vault-name "${KV_NAME}" --name "${KV_SECRET_SSH_PUB}" | jq -r .value | base64 -d)
+PASSWORD=$(az keyvault secret show --vault-name "${KV_NAME}" --name "${KV_SECRET_WIN_PWD}" | jq -r .value)
 
 export WINDOWS_ADMIN_PASSWORD="$PASSWORD"
 export SSH_PUBLIC_KEY="$KEY"
