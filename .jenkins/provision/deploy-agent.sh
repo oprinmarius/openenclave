@@ -65,6 +65,9 @@ else
     TEMPLATE="templates/oe-engine/ubuntu-${AGENT_TYPE}.json"
 fi
 
+# Convert DNS name to lowercase otherwise Azure throws errors
+AGENT_NAME=$(echo ${AGENT_NAME}|awk '{print tolower($0)}')
+
 DIR=$(dirname "$0")
 cd "$DIR"
 eval "cat << EOF
