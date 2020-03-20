@@ -8,6 +8,7 @@ OETOOLS_REPO = "oejenkinscidockerregistry.azurecr.io"
 OETOOLS_REPO_CREDENTIALS_ID = "oejenkinscidockerregistry"
 AZURE_IMAGES_MAP = [
     "win2016": "MicrosoftWindowsServer:confidential-compute-preview:acc-windows-server-2016-datacenter:latest",
+    "win2019": "MicrosoftWindowsServer:WindowsServer:2019-datacenter-with-containers-g2:latest"
 ]
 
 
@@ -58,6 +59,12 @@ def buildWindowsManagedImage(String os_series, String img_name_suffix, String la
                 def jenkins_vnet_name = params.JENKINS_VNET_NAME
                 def jenkins_subnet_name = params.JENKINS_SUBNET_NAME
                 def azure_image_id = AZURE_IMAGES_MAP[os_series]
+                def hyperv_gen
+                if (os_series == "win2016") {
+                    hyperv_gen = "V1"
+                } else {
+                    hyperv_gen = "V2"
+                }
                 withCredentials([usernamePassword(credentialsId: JENKINS_USER_CREDS_ID,
                                                   usernameVariable: "JENKINS_USER_NAME",
                                                   passwordVariable: "JENKINS_USER_PASSWORD")]) {
@@ -132,6 +139,7 @@ def buildWindowsManagedImage(String os_series, String img_name_suffix, String la
                         MANAGED_IMG_ID=`az image create \
                             --resource-group ${vm_rg_name} \
                             --name ${managed_image_name_id}-${img_name_suffix} \
+                            --hyper-v-generation ${hyperv_gen} \
                             --source ${img_name_suffix} | jq -r '.id'`
 
                         # If the target image doesn't exist, the below command
@@ -171,4 +179,6 @@ parallel "Build Ubuntu 16.04"              : { buildLinuxManagedImage("ubuntu", 
          "Build RHEL 8"                    : { buildLinuxManagedImage("rhel", "8") },
          "Build Windows 2016 SGX1"         : { buildWindowsManagedImage("win2016", "ws2016-SGX", "SGX1") },
          "Build Windows 2016 SGX1FLC DCAP" : { buildWindowsManagedImage("win2016", "ws2016-SGX-DCAP", "SGX1FLC") },
-         "Build Windows 2016 nonSGX"       : { buildWindowsManagedImage("win2016", "ws2016-nonSGX", "SGX1FLC-NoDriver") }
+         "Build Windows 2016 nonSGX"       : { buildWindowsManagedImage("win2016", "ws2016-nonSGX", "SGX1FLC-NoDriver") },
+         "Build Windows 2019 SGX1"         : { buildWindowsManagedImage("win2019", "ws2019-SGX", "SGX1-NoDriver") },
+         "Build Windows 2019 SGX1FLC DCAP" : { buildWindowsManagedImage("win2019", "ws2019-SGX-DCAP", "SGX1FLC-NoDriver") }
