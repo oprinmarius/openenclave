@@ -548,12 +548,12 @@ function Install-DCAP-Dependencies {
             'WinServer2019' = @{
                 'sgx_base' = @{
                     'zip_path'    = "$PACKAGES_DIRECTORY\Intel_SGX_DCAP\Intel SGX DCAP for Windows *\LC_driver_${OS_VERSION}\Signed_*.zip"
-                    'location'    = 'root\SgxLCDevice'
+                    'location'    = 'acpi\int0e0c'
                     'description' = 'Intel(R) Software Guard Extensions Launch Configuration Service'
                 }
                 'sgx_dcap' = @{
                     'zip_path'    = "$PACKAGES_DIRECTORY\Intel_SGX_DCAP\Intel SGX DCAP for Windows *\DCAP_INF\${OS_VERSION}\Signed_*.zip"
-                    'location'    = 'root\SgxLCDevice_DCAP'
+                    'location'    = 'SWC\VEN_INT&DEV_0E0C_DCAP'
                     'description' = 'Intel(R) Software Guard Extensions DCAP Components Device'
                 }
             }
