@@ -1,5 +1,8 @@
-@Library("OpenEnclaveCommon") _
-oe = new jenkins.common.Openenclave()
+// Copyright (c) Open Enclave SDK contributors.
+// Licensed under the MIT License.
+
+properties([parameters([string(name: 'OECI_LIB_VERSION', defaultValue: 'master')])])
+def oe = library("OpenEnclaveCommon@${params.OECI_LIB_VERSION}").jenkins.common.Openenclave.new()
 
 GLOBAL_TIMEOUT_MINUTES = 240
 
